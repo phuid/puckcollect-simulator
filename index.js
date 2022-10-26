@@ -20,16 +20,18 @@ var GamePiece;
 function startGame() {
   robots = new Array(2);
   robots[0] = new component(
-    TEAMS[0].bot.profiles,
-    TEAMS[0].color,
-    TEAMS[0].base.x + TEAMS[0].base.width / 2,
-    TEAMS[0].base.y + TEAMS[0].base.height / 2
+    TEAMS[0].bot, // details
+    TEAMS[0].color, // color
+    TEAMS[0].base.x + TEAMS[0].base.width / 2, //x pos
+    TEAMS[0].base.y + TEAMS[0].base.height / 2, //y pos
+    0 //rotation
   );
   robots[1] = new component(
-    TEAMS[1].bot.profiles,
-    TEAMS[1].color,
-    TEAMS[1].base.x + TEAMS[1].base.width / 2,
-    TEAMS[1].base.y + TEAMS[1].base.height / 2
+    TEAMS[1].bot, // details
+    TEAMS[1].color, // color
+    TEAMS[1].base.x + TEAMS[1].base.width / 2, //x pos
+    TEAMS[1].base.y + TEAMS[1].base.height / 2, //y pos
+    0 //rotation
   );
   GameArea.start();
 }
@@ -56,45 +58,76 @@ var GameArea = {
       );
     });
 
-    console.log("draw");
+    // console.log("drawstat"); //debug
   },
 };
 
-function component(profiles, color, x, y) {
-  this.profiles = profiles;
+function component(bot, color, x, y, rot) {
+  this.profiles = bot.profiles;
+  this.motorpoints = bot.motorpoints;
+  this.sensor = bot.sensor;
+  this.rotation = rot;
   // this.speedX = 0;
   // this.speedY = 0;
   this.x = x;
   this.y = y;
-  this.update = function () {
+
+  this.draw = function () {
     ctx = GameArea.context;
-    for (let index = 0; index < profiles.length; index++) {
-      const profile = profiles[index];
+    //draw polygonal profiles
+    for (let index = 0; index < this.profiles.length; index++) {
+      const profile = this.profiles[index];
       ctx.fillStyle = color + PROFILESHADE;
 
       ctx.translate(this.x, this.y);
-      // ctx.rotate(DEGtoRAD(45));
+      ctx.rotate(DEGtoRAD(this.rotation));
 
       ctx.beginPath();
-      // ctx.moveTo(0, 0);
-      // ctx.lineTo(100, 50);
-      // ctx.lineTo(50, 100);
-      // ctx.lineTo(0, 90);
-
       ctx.moveTo(profile[0].x, profile[0].x);
-
       for (let i = 1; i < profile.length; i++) {
         const point = profile[i];
         ctx.lineTo(point.x, point.y);
       }
-
       ctx.closePath();
       ctx.fill();
 
       ctx.translate(-this.x, -this.y);
-      // ctx.rotate(DEGtoRAD(31));
+      ctx.rotate(DEGtoRAD(-1 * this.rotation));
     }
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    //draw sensor and motorpoint on screen
+    this.motorpoints.forEach((motorpoint) => {
+      ctx.moveTo(this.x + this.sensor.x, this.y + this.sensor.y);
+      ctx.beginPath();
+      ctx.arc(
+        this.x + motorpoint.x,
+        this.y + motorpoint.y,
+        motorpoint.size,
+        0,
+        DEGtoRAD(360)
+      );
+      ctx.closePath();
+      ctx.fillStyle = MOTORFILL;
+      ctx.fill();
+    });
+
+    ctx.moveTo(this.x + this.sensor.x, this.y + this.sensor.y);
+    ctx.beginPath();
+    ctx.arc(
+      this.x + this.sensor.x,
+      this.y + this.sensor.y,
+      this.sensor.size,
+      0,
+      DEGtoRAD(360)
+    );
+    ctx.closePath();
+    ctx.fillStyle = SENSORFILL;
+    ctx.fill();
+
+    // console.log("drawcomp"); //debug
+  };
+
+  this.update = function () {
+    this.draw();
   };
   // this.newPos = function () {
   //   this.x += this.speedX;

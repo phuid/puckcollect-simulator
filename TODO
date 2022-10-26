@@ -1,1 +1,13 @@
-drawing polygonal robots
+done:
+draw sensor and motorpoints on screen
+
+work:
+make rotation not suck :)
+
+future:
+every profile be an array of poygons -> not just a single one
+movement
+sensor raytracing
+
+far:
+code simulation
