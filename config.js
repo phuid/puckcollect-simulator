@@ -33,16 +33,18 @@ const TEAMS = [
         ],
       ],
       motorpoints: [
-        { x: -164, y: 50, size: 30 },
-        { x: 168, y: 51, size: 30 },
+        { x: -164, y: -50, size: 30 },
+        { x: 168, y: -51, size: 30 },
       ],
       sensor: {
         x: -16,
-        y: -71,
+        y: 150,
         precision: 1, //deg
         datatime: 150, //ms per rotation
+        seesprofiles: [true, false, false], //booleans - [bottom(with pucks; index 0), mid, top]
         size: 50,
       },
+      maxspeed: 100,
     },
     base: {
       x: 0,
@@ -84,8 +86,10 @@ const TEAMS = [
         y: -71,
         precision: 1, //deg
         datatime: 150, //ms per rotation
-        size: 50,
+        seesprofiles: [true, false, false], //booleans - [bottom(with pucks; index 0), mid, top]
+        size: 50, //size, sensor body occupies
       },
+      maxspeed: 300, // mm/s
     },
     base: {
       x: 2000,

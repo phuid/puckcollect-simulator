@@ -2,6 +2,7 @@
   --back: black;
   --fore: lightgrey;
   --color: red;
+  --accent: lightblue;
   overflow: hidden;
 }
 
@@ -10,6 +11,12 @@ body {
   color: var(--color);
   margin: 0;
   padding: 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: monospace;
 }
 
 canvas {
@@ -31,7 +38,7 @@ canvas {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-around;
   overflow-x: scroll;
   overflow-y: hidden;
 }
@@ -39,6 +46,39 @@ canvas {
 #controls>* {
   min-height: 2rem;
   min-width: 45%;
+  border: 1px solid var(--color);
+}
+
+#movement-select>*:is(group) {
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  padding-inline: 1rem;
+  flex-grow: 1;
+}
+
+#dpads-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+#dpads-container {
+  visibility: hidden;
+}
+
+#simple_movement:checked~#dpads-container {
+  visibility: visible;
+}
+
+.dpad {
+  margin: 0;
+  background-color: var(--fore);
+  border-radius: 50%;
+  flex-grow: 1;
+  min-width: 100px;
+  min-height: 100px;
 }
 
 @media screen and (orientation: portrait) {
