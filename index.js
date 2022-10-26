@@ -24,7 +24,7 @@ function startGame() {
     TEAMS[0].color, // color
     TEAMS[0].base.x + TEAMS[0].base.width / 2, //x pos
     TEAMS[0].base.y + TEAMS[0].base.height / 2, //y pos
-    0 //rotation
+    180 //rotation
   );
   robots[1] = new component(
     TEAMS[1].bot, // details
@@ -74,13 +74,16 @@ function component(bot, color, x, y, rot) {
 
   this.draw = function () {
     ctx = GameArea.context;
+    ctx.save();
+
+    ctx.translate(this.x, this.y);
+    ctx.rotate(DEGtoRAD(this.rotation));
     //draw polygonal profiles
     for (let index = 0; index < this.profiles.length; index++) {
       const profile = this.profiles[index];
       ctx.fillStyle = color + PROFILESHADE;
 
-      ctx.translate(this.x, this.y);
-      ctx.rotate(DEGtoRAD(this.rotation));
+      // console.log(DEGtoRAD(this.rotation)); //debug
 
       ctx.beginPath();
       ctx.moveTo(profile[0].x, profile[0].x);
@@ -90,17 +93,13 @@ function component(bot, color, x, y, rot) {
       }
       ctx.closePath();
       ctx.fill();
-
-      ctx.translate(-this.x, -this.y);
-      ctx.rotate(DEGtoRAD(-1 * this.rotation));
     }
     //draw sensor and motorpoint on screen
     this.motorpoints.forEach((motorpoint) => {
-      ctx.moveTo(this.x + this.sensor.x, this.y + this.sensor.y);
       ctx.beginPath();
       ctx.arc(
-        this.x + motorpoint.x,
-        this.y + motorpoint.y,
+        motorpoint.x,
+        motorpoint.y,
         motorpoint.size,
         0,
         DEGtoRAD(360)
@@ -110,11 +109,10 @@ function component(bot, color, x, y, rot) {
       ctx.fill();
     });
 
-    ctx.moveTo(this.x + this.sensor.x, this.y + this.sensor.y);
     ctx.beginPath();
     ctx.arc(
-      this.x + this.sensor.x,
-      this.y + this.sensor.y,
+      this.sensor.x,
+      this.sensor.y,
       this.sensor.size,
       0,
       DEGtoRAD(360)
@@ -123,6 +121,8 @@ function component(bot, color, x, y, rot) {
     ctx.fillStyle = SENSORFILL;
     ctx.fill();
 
+    // ctx.translate(-this.x, -this.y);
+    ctx.restore();
     // console.log("drawcomp"); //debug
   };
 
