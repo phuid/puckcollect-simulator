@@ -1,3 +1,4 @@
+<!--  -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,34 +7,61 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>puck collect</title>
+
   <link rel="icon" type="image/x-icon" href="puck.png">
+
   <link rel="stylesheet" href="style.css">
+
+  <script type="text/javascript" src="config.js"></script>
+  <script src="colorblend.js" defer></script>
+  <script src="index.js" defer></script>
 </head>
-<script type="text/javascript" src="config.js"></script>
-<script src="index.js" defer></script>
 
 <body>
-  <!-- <label for="myCanvas">canvas:</label> -->
   <canvas id="fieldcanvas"></canvas>
-  <div id="controls">
+  <div class="controls">
     <div id="movement-select">
       <label for="movement-select">movement:</label>
       <br>
-      <group>
-        <label for="simple_movement"> simple</label>
-        <input type="radio" name="movement" id="simple_movement" checked="true">
-      </group>
-      <group>
-        <label for="advanced_movement">advanced</label>
-        <input type="radio" name="movement" id="advanced_movement">
-      </group>
+      <div>
+        <group class="movement-group">
+          <label for="simple-movement0"> simple</label>
+          <input type="radio" name="movement0" id="simple-movement0" class="simple-movement movement0" checked="true">
+
+          <label for="advanced-movement0">advanced</label>
+          <input type="radio" name="movement0" id="advanced-movement0" class="advanced-movement movement0">
+
+          <label for="code-movement0">code</label>
+          <input type="radio" name="movement0" id="code-movement0" class="code-movement movement0">
+
+        </group>
+
+        <br>
+
+        <group class="movement-group">
+          <label for="simple-movement1"> simple</label>
+          <input type="radio" name="movement1" id="simple-movement1" class="simple-movement movement1" checked="true">
+
+          <label for="advanced-movement1">advanced</label>
+          <input type="radio" name="movement1" id="advanced-movement1" class="advanced-movement movement1">
+
+          <label for="code-movement1">code</label>
+          <input type="radio" name="movement1" id="code-movement1" class="code-movement movement1">
+
+        </group>
+      </div>
       <br>
-      there is none yet :P
     </div>
-    <div id="dpads-container" >
-      <div class="dpad" onmousedown="track(0)" onmouseup="untrack(0)"></div>
-      <div class="dpad" onmousedown="track(1)" onmouseup="untrack(1)"></div>
+    <div class="joystick-container">
+      <div class="joystick" onclick="track(0)"></div>
+      <div class="tracker" onclick="track(0)"></div>
     </div>
+    <div class="joystick-container">
+      <div class="joystick" onclick="track(1)"></div>
+      <div class="tracker" onclick="track(1)""></div>
+    </div>
+    <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button><button>14</button><button>15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button>
+    <button>a1</button><button>a2</button><button>a3</button><button>a4</button><button>a5</button><button>a6</button><button>a7</button><button>a8</button><button>a9</button><button>a10</button><button>a11</button><button>a12</button><button>a13</button><button>a14</button><button>a15</button><button>a16</button><button>a17</button><button>a18</button><button>a19</button><button>a20</button>
   </div>
 </body>
 

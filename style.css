@@ -1,8 +1,9 @@
 :root {
-  --back: black;
-  --fore: lightgrey;
-  --color: red;
-  --accent: lightblue;
+  --back: #000;
+  --fore: #CCC;
+  --border: #000;
+  --color: #9EF;
+  --accent: #5CC;
   overflow: hidden;
 }
 
@@ -19,16 +20,17 @@ h1, h2, h3, h4, h5, h6 {
   font-family: monospace;
 }
 
-canvas {
+#fieldcanvas {
   position: absolute;
   height: 100vh;
   width: 100vh;
   top: 0;
   left: 0;
   background-color: var(--fore);
+  z-index: 1;
 }
 
-#controls {
+.controls {
   border: 1px dotted var(--color);
   position: absolute;
   height: 100vh;
@@ -43,53 +45,67 @@ canvas {
   overflow-y: hidden;
 }
 
-#controls>* {
+.controls>*:not(.joystick-container):not(#movement-select) {
   min-height: 2rem;
   min-width: 45%;
-  border: 1px solid var(--color);
+  border: 1px solid var(--border);
+  flex-grow: 1;
 }
 
-#movement-select>*:is(group) {
+group {
   border: 2px solid var(--accent);
+  padding-inline-end: 1rem;
   border-radius: 10px;
-  padding-inline: 1rem;
-  flex-grow: 1;
 }
 
-#dpads-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  flex-grow: 1;
+#movement-select {
+  height: 7rem;
 }
 
-#dpads-container {
-  visibility: hidden;
+label {
+  margin-inline-start: 1rem;
 }
 
-#simple_movement:checked~#dpads-container {
-  visibility: visible;
+.joystick-container {
+  min-height: calc((100vh - 10rem) / 2);
+  display: grid;
+  grid-template: 1fr / 1fr;
+  place-items: center;
 }
 
-.dpad {
-  margin: 0;
+.joystick {
+  margin: 0.5rem;
   background-color: var(--fore);
   border-radius: 50%;
-  flex-grow: 1;
-  min-width: 100px;
-  min-height: 100px;
+  border: 0.5rem solid var(--border);
+  height: 90%;
+  aspect-ratio: 1;
+
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+  z-index: 2;
+}
+
+.tracker {
+  background-color: var(--fore);
+  border-radius: 50%;
+  height: 20%;
+  aspect-ratio: 1;
+  
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+  z-index: 3;
 }
 
 @media screen and (orientation: portrait) {
-  canvas {
+  #fieldcanvas {
     position: absolute;
     width: 100vw;
     height: 100vw;
     right: 0;
   }
 
-  #controls {
+  .controls {
     width: 100vw;
     top: 100vw;
     height: calc(100vh - 100vw);
@@ -100,7 +116,7 @@ canvas {
     overflow-x: hidden;
   }
 
-  #controls>* {
+  .controls>* {
     min-height: 5rem;
     min-width: calc(100% / 3);
   }

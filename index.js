@@ -1,23 +1,139 @@
-//fill polys
-// ctx.fillStyle = '#f00';
-// ctx.beginPath();
-// ctx.moveTo(0, 0);
-// ctx.lineTo(100,50);
-// ctx.lineTo(50, 100);
-// ctx.lineTo(0, 90);
-// ctx.closePath();
-// ctx.fill();´
+function checkJoystickVisibility() {
+  for (let num = 0; num < TEAMS.length; num++) {
+    if (document.getElementsByClassName("movement" + num)[0].checked) {
+      document.getElementsByClassName("joystick-container")[num].style.display =
+        "grid";
+    } else {
+      document.getElementsByClassName("joystick-container")[num].style.display =
+        "none";
+    }
+  }
+}
+
+document
+  .getElementById("movement-select")
+  .addEventListener("click", checkJoystickVisibility);
+
+checkJoystickVisibility();
+
+var mousePos = { x: 0, y: 0 };
+document.addEventListener("mousemove", (e) => {
+  mousePos = { x: e.clientX, y: e.clientY };
+  // console.log(mousePos); //debug
+});
+
+//color the html elements based on team they belong to
+for (let i = 0; i < TEAMS.length; i++) {
+  var joystick = document.getElementsByClassName("joystick")[i];
+  joystick.style.borderColor = blend_colors(
+    TEAMS[i].color,
+    getComputedStyle(document.documentElement).getPropertyValue("--fore")
+  );
+  joystick.style.backgroundColor = blend_colors(
+    TEAMS[i].color,
+    getComputedStyle(document.documentElement).getPropertyValue("--back")
+  );
+
+  var tracker = document.getElementsByClassName("tracker")[i];
+  tracker.style.backgroundColor = blend_colors(
+    TEAMS[i].color,
+    getComputedStyle(document.documentElement).getPropertyValue("--fore")
+  );
+
+  var group = document.getElementsByClassName("movement-group")[i];
+  group.style.borderColor = blend_colors(
+    TEAMS[i].color,
+    getComputedStyle(document.documentElement).getPropertyValue("--fore")
+  );
+}
 
 function DEGtoRAD(deg) {
   return (deg * Math.PI) / 180;
 }
 
-function getMovementType() {
-  if (document.getElementById("simple_movement").checked) {
-    return 0
+function readJoystick(botnum) {
+  var rect = document
+    .getElementsByClassName("joystick")
+    [botnum].getBoundingClientRect();
+  var rectCoords = {
+    x: mousePos.x - (rect.x + rect.width / 2),
+    y: mousePos.y - (rect.y + rect.height / 2),
+  };
+
+  if (rectCoords.x > rect.width / 2) {
+    rectCoords.x = rect.width / 2;
   }
-  else {
-    return 1
+  if (rectCoords.x < rect.width / -2) {
+    rectCoords.x = rect.width / -2;
+  }
+  if (rectCoords.y > rect.height / 2) {
+    rectCoords.y = rect.height / 2;
+  }
+  if (rectCoords.y < rect.height / -2) {
+    rectCoords.y = rect.height / -2;
+  }
+
+  // morph square (x,y) to circle (x,y)
+  var xx, yy, a;
+  xx = Math.abs(rectCoords.x);
+  yy = Math.abs(rectCoords.y);
+  if (xx + yy <= 1e-10) a = 0.0;
+  else if (xx >= yy) a = Math.cos(Math.atan(yy / xx));
+  else a = Math.cos(Math.atan(xx / yy));
+  rectCoords.x *= a;
+  rectCoords.y *= a;
+
+  console.log(rectCoords);
+
+  return rectCoords;
+}
+
+function showTracker(moveAmount, botnum) {
+  var tracker = document.getElementsByClassName("tracker")[botnum];
+  var joystickRect = document
+    .getElementsByClassName("joystick")
+    [botnum].getBoundingClientRect();
+
+  trackerHeight = document
+    .getElementsByClassName("tracker")
+    [botnum].getBoundingClientRect().height;
+
+  tracker.style.position = "absolute";
+  tracker.style.height = trackerHeight.toString() + "px";
+  tracker.style.left =
+    Math.round(
+      joystickRect.x + joystickRect.width / 2 + moveAmount.x
+    ).toString() + "px";
+  console.log(
+    Math.round(
+      joystickRect.x + joystickRect.width / 2 + moveAmount.x
+    ).toString() + "px"
+  );
+}
+
+function getMovementType(botnum) {
+  if (document.getElementsByClassName("simple-movement")[botnum].checked) {
+    return 0;
+  } else if (
+    document.getElementsByClassName("advanced-movement")[botnum].checked
+  ) {
+    return 1;
+  } else {
+    return 2;
+  }
+}
+
+function getMoveAmount(type, botnum) {
+  if (type == 0) {
+    // simple movement
+    if (bots[botnum].istracking) {
+      var moveAmount = readJoystick(botnum);
+      showTracker(moveAmount, botnum);
+    }
+    return { x: 0, y: 0 };
+  } else if (type == 1) {
+    //advanced movement
+  } else {
   }
 }
 
@@ -124,12 +240,15 @@ function bot(bot, color, x, y, rot) {
   };
 
   this.move = function (moveType, moveAmount) {
-    console.log(moveType);
-    console.log(moveAmount);
-  }
+    // console.log(moveType); //debug
+    // console.log(moveAmount); //debug
+  };
 
-  this.update = function () {
-    this.move(getMovementType(), getMoveAmount());
+  this.update = function (botnum) {
+    this.move(
+      getMovementType(botnum),
+      getMoveAmount(getMovementType(botnum), botnum)
+    );
     this.draw();
   };
   // this.newPos = function () {
@@ -141,17 +260,18 @@ function bot(bot, color, x, y, rot) {
 function updateGameArea() {
   GameArea.clear();
   GameArea.drawStationary();
-  bots.forEach((bot) => {
-    bot.update();
-  });
+  for (let botnum = 0; botnum < bots.length; botnum++) {
+    const bot = bots[botnum];
+    bot.update(botnum);
+  }
 }
 
 function track(index) {
-  bots[index].istracking = 1;
-}
-
-function untrack(index) {
-  bots[index].istracking = 0;
+  if (bots[1 - index].istracking) {
+    bots[1 - index].istracking = 0;
+  } else {
+    bots[index].istracking = !bots[index].istracking;
+  }
 }
 
 startGame();
