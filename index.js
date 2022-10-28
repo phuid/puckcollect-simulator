@@ -83,13 +83,14 @@ function readJoystick(botnum) {
   rectCoords.x *= a;
   rectCoords.y *= a;
 
-  console.log(rectCoords);
+  // console.log(rectCoords);
 
   return rectCoords;
 }
 
 function showTracker(moveAmount, botnum) {
   var tracker = document.getElementsByClassName("tracker")[botnum];
+  var trackerRect = tracker.getBoundingClientRect();
   var joystickRect = document
     .getElementsByClassName("joystick")
     [botnum].getBoundingClientRect();
@@ -98,17 +99,23 @@ function showTracker(moveAmount, botnum) {
     .getElementsByClassName("tracker")
     [botnum].getBoundingClientRect().height;
 
-  tracker.style.position = "absolute";
+  tracker.style.position = "fixed";
   tracker.style.height = trackerHeight.toString() + "px";
   tracker.style.left =
-    Math.round(
-      joystickRect.x + joystickRect.width / 2 + moveAmount.x
+    (
+      joystickRect.x -
+      trackerRect.width / 2 +
+      joystickRect.width / 2 +
+      moveAmount.x
     ).toString() + "px";
-  console.log(
-    Math.round(
-      joystickRect.x + joystickRect.width / 2 + moveAmount.x
-    ).toString() + "px"
-  );
+  tracker.style.top =
+    (
+      joystickRect.y -
+      trackerRect.height / 2 +
+      joystickRect.height / 2 +
+      moveAmount.y
+    ).toString() + "px";
+  console.log(tracker.style.left);
 }
 
 function getMovementType(botnum) {
@@ -267,11 +274,18 @@ function updateGameArea() {
 }
 
 function track(index) {
-  if (bots[1 - index].istracking) {
-    bots[1 - index].istracking = 0;
-  } else {
-    bots[index].istracking = !bots[index].istracking;
+  
+
+  for (let botnum = 0; botnum < bots.length; botnum++) {
+    const bot = bots[botnum];
+    if (bot.istracking) {
+      bot.istracking = 0;
+      showTracker({x: 0, y: 0}, botnum);
+      return;
+    }
   }
+
+  bots[index].istracking = !bots[index].istracking;
 }
 
 startGame();
