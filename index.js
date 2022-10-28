@@ -231,8 +231,8 @@ function bot(bot, color, x, y, rot) {
 
       // console.log(DEGtoRAD(this.rotation)); //debug
 
-      ctx.beginPath();
       ctx.moveTo(profile[0].x, profile[0].x);
+      ctx.beginPath();
       for (let i = 1; i < profile.length; i++) {
         const point = profile[i];
         ctx.lineTo(point.x, point.y);
