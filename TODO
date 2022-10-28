@@ -3,15 +3,17 @@ draw sensor and motorpoints on screen
 make rotation not suck :)
 joysticks separate
 (mayBeDone) make the dpads circles pls :////// css is shit i hate it 🤮
+fix showTracker()
+SIMPLE movement
 
 work:
-fix showTracker()
-movement
 
 future:
 advanced movement
 every profile be an array of poygons -> not just a single one
 sensor raytracing
+have a puck collecting polygon - when a puck touches it puck get collected
+puck drop mechanic
 
 far:
 code movement - code simulation

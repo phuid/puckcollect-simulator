@@ -83,17 +83,25 @@ function readJoystick(botnum) {
   rectCoords.x *= a;
   rectCoords.y *= a;
 
-  // console.log(rectCoords);
+  // console.log(rectCoords); // debug
 
-  return rectCoords;
+  return {
+    x: (rectCoords.x * 2) / rect.width,
+    y: (rectCoords.y * 2) / rect.height,
+  };
 }
 
-function showTracker(moveAmount, botnum) {
+function showTracker(MoveAmount, botnum) {
   var tracker = document.getElementsByClassName("tracker")[botnum];
   var trackerRect = tracker.getBoundingClientRect();
   var joystickRect = document
     .getElementsByClassName("joystick")
     [botnum].getBoundingClientRect();
+
+  realMoveAmount = {
+    x: MoveAmount.x * (joystickRect.width / 2),
+    y: MoveAmount.y * (joystickRect.height / 2),
+  };
 
   trackerHeight = document
     .getElementsByClassName("tracker")
@@ -106,16 +114,15 @@ function showTracker(moveAmount, botnum) {
       joystickRect.x -
       trackerRect.width / 2 +
       joystickRect.width / 2 +
-      moveAmount.x
+      realMoveAmount.x
     ).toString() + "px";
   tracker.style.top =
     (
       joystickRect.y -
       trackerRect.height / 2 +
       joystickRect.height / 2 +
-      moveAmount.y
+      realMoveAmount.y
     ).toString() + "px";
-  console.log(tracker.style.left);
 }
 
 function getMovementType(botnum) {
@@ -136,11 +143,17 @@ function getMoveAmount(type, botnum) {
     if (bots[botnum].istracking) {
       var moveAmount = readJoystick(botnum);
       showTracker(moveAmount, botnum);
+    } else {
+      var moveAmount = { x: 0, y: 0 };
+      showTracker(moveAmount, botnum);
     }
-    return { x: 0, y: 0 };
+    return moveAmount;
   } else if (type == 1) {
     //advanced movement
+    //TODO
   } else {
+    //code movement
+    //TODO
   }
 }
 
@@ -196,6 +209,7 @@ var GameArea = {
 
 function bot(bot, color, x, y, rot) {
   this.profiles = bot.profiles;
+  this.color = color;
   this.motorpoints = bot.motorpoints;
   this.sensor = bot.sensor;
   this.rotation = rot;
@@ -246,15 +260,37 @@ function bot(bot, color, x, y, rot) {
     // console.log("drawcomp"); //debug
   };
 
-  this.move = function (moveType, moveAmount) {
-    // console.log(moveType); //debug
-    // console.log(moveAmount); //debug
+  this.move = function (moveType, moveAmount, botnum) {
+    if (moveType == 0) {
+      //simple movement
+      var wannaberot =
+        this.rotation + moveAmount.x * TEAMS[botnum].bot.maxrotationspeed;
+      if (wannaberot > 360) {
+        wannaberot -= 360;
+      } else if (wannaberot < 0) {
+        wannaberot += 360;
+      }
+      this.rotation = wannaberot;
+
+      var speed = -moveAmount.y * TEAMS[botnum].bot.maxspeed;
+      this.x += speed * Math.sin(DEGtoRAD(this.rotation));
+      this.y += -speed * Math.cos(DEGtoRAD(this.rotation));
+      // console.log(Math.cos(DEGtoRAD(this.rotation)));
+      // console.log(this.rotation);
+    } else if (moveType == 1) {
+      //advanced movement
+      //TODO
+    } else {
+      //code movement
+      //TODO
+    }
   };
 
   this.update = function (botnum) {
     this.move(
       getMovementType(botnum),
-      getMoveAmount(getMovementType(botnum), botnum)
+      getMoveAmount(getMovementType(botnum), botnum),
+      botnum
     );
     this.draw();
   };
@@ -274,13 +310,10 @@ function updateGameArea() {
 }
 
 function track(index) {
-  
-
   for (let botnum = 0; botnum < bots.length; botnum++) {
     const bot = bots[botnum];
     if (bot.istracking) {
       bot.istracking = 0;
-      showTracker({x: 0, y: 0}, botnum);
       return;
     }
   }

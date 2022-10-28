@@ -44,7 +44,8 @@ const TEAMS = [
         seesprofiles: [true, false, false], //booleans - [bottom(with pucks; index 0), mid, top]
         size: 50,
       },
-      maxspeed: 100,
+      maxspeed: 100, // mm/s
+      maxrotationspeed: 3, // rotations/s
     },
     base: {
       x: 0,
@@ -89,7 +90,8 @@ const TEAMS = [
         seesprofiles: [true, false, false], //booleans - [bottom(with pucks; index 0), mid, top]
         size: 50, //size, sensor body occupies
       },
-      maxspeed: 300, // mm/s
+      maxspeed: 30, // mm/s
+      maxrotationspeed: 3, // rotations/s
     },
     base: {
       x: 2000,
