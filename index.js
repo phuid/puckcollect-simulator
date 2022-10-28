@@ -157,6 +157,17 @@ function getMoveAmount(type, botnum) {
   }
 }
 
+function checkColisions(botnum, wannaberot, wannabeX, wannabeY) {
+  var colisions = { rot: false, x: false, y: false };
+
+  Object.values(colisions).forEach((val) => {
+    // calculate colisions for each movement (asuming calculation for combination would wield different result in minority of cases)
+    // use checkPointInPoly([{}], x, y)
+  });
+
+  return colisions;
+}
+
 var c = document.getElementById("fieldcanvas");
 var ctx = c.getContext("2d");
 
@@ -270,13 +281,17 @@ function bot(bot, color, x, y, rot) {
       } else if (wannaberot < 0) {
         wannaberot += 360;
       }
-      this.rotation = wannaberot;
 
       var speed = -moveAmount.y * TEAMS[botnum].bot.maxspeed;
-      this.x += speed * Math.sin(DEGtoRAD(this.rotation));
-      this.y += -speed * Math.cos(DEGtoRAD(this.rotation));
-      // console.log(Math.cos(DEGtoRAD(this.rotation)));
-      // console.log(this.rotation);
+      var wannabeX = this.x + speed * Math.sin(DEGtoRAD(this.rotation));
+      var wannabeY = this.y - speed * Math.cos(DEGtoRAD(this.rotation));
+
+      //check colisions
+      if (!checkColisions(botnum, wannaberot, wannabeX, wannabeY)) {
+        this.rotation = wannaberot;
+        this.x = wannabeX;
+        this.y = wannabeY;
+      }
     } else if (moveType == 1) {
       //advanced movement
       //TODO
